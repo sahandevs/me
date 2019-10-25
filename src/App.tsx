@@ -90,7 +90,7 @@ type FilterDefinition = {
 const filters: FilterDefinition[] = [
   { name: "Mobile", id: "mobile", headerName: "Mobile Application" },
   { name: "Web", id: "web", headerName: "Frontend" },
-  { name: "Backend", id: "backend", headerName: "Frontend" },
+  { name: "Backend", id: "backend", headerName: "Backend" },
   { name: "Other / Researches", id: "other", headerName: "" }
 ];
 
