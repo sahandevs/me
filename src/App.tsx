@@ -1,18 +1,42 @@
 import React from "react";
-import { Container, Typography, Box, Chip } from "@material-ui/core";
+import { Container, Typography, Box, Chip, Fade } from "@material-ui/core";
 import "./App.css";
 // TODO: look at this color plette https://colorhunt.co/palette/159988
 function Header() {
   const context = useAppContext();
 
+  function buildTitles(titles: string[], selected: string) {
+    const _titles = titles.filter(x => x !== selected);
+    return [..._titles, selected].map(title => {
+      const isSelected = selected === title;
+      return (
+        <Typography
+          key={`title_${title}`}
+          variant="h2"
+          color="primary"
+          component="span"
+          style={{
+            position: isSelected ? "relative" : "absolute",
+            transform: isSelected ? "translate(0px)" : "translate(-300px)",
+            transition: "300ms",
+            opacity: isSelected ? 1.0 : 0.0
+          }}
+        >
+          {title}
+        </Typography>
+      );
+    });
+  }
+
   return (
-    <Typography variant="h3" component="span" style={{ fontWeight: 300 }}>
+    <Typography variant="h3" component="div" style={{ fontWeight: 300 }}>
       {`Hi! I'm Sahand`}
       <br />
       <Typography variant="h2" component="span">{`and I'm a `}</Typography>
-      <Typography variant="h2" color="primary" component="span">
-        {context.filter.currentFilter.headerName}
-      </Typography>
+      {buildTitles(
+        context.filter.filterDefinitions.map(v => v.headerName), //
+        context.filter.currentFilter.headerName
+      )}
       <Typography variant="h2" component="span">{` Developer`}</Typography>
     </Typography>
   );
@@ -88,7 +112,7 @@ type FilterDefinition = {
 };
 
 const filters: FilterDefinition[] = [
-  { name: "Mobile", id: "mobile", headerName: "Mobile Application" },
+  { name: "Android / iOS", id: "mobile", headerName: "Mobile Application" },
   { name: "Web", id: "web", headerName: "Frontend" },
   { name: "Backend", id: "backend", headerName: "Backend" },
   { name: "Other / Researches", id: "other", headerName: "" }
