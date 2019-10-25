@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Typography, Box, Chip } from "@material-ui/core";
 import "./App.css";
-
+// TODO: look at this color plette https://colorhunt.co/palette/159988
 function Header() {
   const context = useAppContext();
 
