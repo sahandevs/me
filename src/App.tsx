@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Typography, Box, Chip } from "@material-ui/core";
+import { Container, Typography, Box, Chip, Card, CardActionArea } from "@material-ui/core";
 import "./App.css";
 // TODO: look at this color plette https://colorhunt.co/palette/159988
 function Header() {
@@ -70,7 +70,29 @@ function Filters() {
 }
 
 function Projects() {
-  return <h4>{"this is the projects section"}</h4>;
+  const context = useAppContext();
+
+  function buildProjects(projects: Project[]) {
+    return projects.map((project, i) => (
+      <Card key={`project_${i}`} style={{ minWidth: 230, minHeight: 120, marginLeft: 10, marginTop: 10 }}>
+        <CardActionArea>
+          <Typography variant="h6">{project.name}</Typography>
+        </CardActionArea>
+      </Card>
+    ));
+  }
+
+  return (
+    <Box
+      display="flex"
+      flexWrap="wrap"
+      flexDirection="row"
+      margin="30px"
+      //
+    >
+      {buildProjects(context.project.currentFilterProjects)}
+    </Box>
+  );
 }
 
 const App: React.FC = () => {
@@ -80,6 +102,14 @@ const App: React.FC = () => {
         filterDefinitions: filters,
         selectedFilterId: filters[0].id,
         setFilter
+      },
+      project: {
+        allProjects: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => {
+          return {
+            name: `Project #${i}`,
+            canBeFilterBy: [filtersByName.mobile]
+          };
+        })
       }
     };
   });
@@ -105,17 +135,29 @@ const App: React.FC = () => {
   );
 };
 
+type Project = {
+  name: string;
+  canBeFilterBy: FilterDefinition[];
+};
+
 type FilterDefinition = {
   name: string;
   id: string;
   headerName: string;
 };
 
+const filtersByName = {
+  mobile: { name: "Android / iOS", id: "mobile", headerName: "Mobile Application" },
+  web: { name: "Web", id: "web", headerName: "Frontend" },
+  backend: { name: "Backend", id: "backend", headerName: "Backend" },
+  others: { name: "Other / Researches", id: "other", headerName: "" }
+};
+
 const filters: FilterDefinition[] = [
-  { name: "Android / iOS", id: "mobile", headerName: "Mobile Application" },
-  { name: "Web", id: "web", headerName: "Frontend" },
-  { name: "Backend", id: "backend", headerName: "Backend" },
-  { name: "Other / Researches", id: "other", headerName: "" }
+  filtersByName.mobile,
+  filtersByName.web,
+  filtersByName.backend,
+  filtersByName.others
 ];
 
 type AppContextProps = {
@@ -124,6 +166,9 @@ type AppContextProps = {
     selectedFilterId: string;
     setFilter: (filter: FilterDefinition) => void;
   };
+  project: {
+    allProjects: Project[];
+  };
 };
 
 // @ts-ignore
@@ -131,12 +176,25 @@ const AppContext = React.createContext<AppContextProps>();
 
 function useAppContext() {
   const context = React.useContext<AppContextProps>(AppContext);
+
+  function _currentFilter() {
+    return context.filter.filterDefinitions.find(x => x.id === context.filter.selectedFilterId)!;
+  }
+
   return {
     ...context,
     filter: {
       ...context.filter,
       get currentFilter() {
-        return context.filter.filterDefinitions.find(x => x.id === context.filter.selectedFilterId)!;
+        return _currentFilter();
+      }
+    },
+    project: {
+      ...context.project,
+      get currentFilterProjects() {
+        return context.project.allProjects.filter(
+          x => x.canBeFilterBy.includes(_currentFilter()) || x.canBeFilterBy.length === 0
+        );
       }
     }
   };
