@@ -74,7 +74,7 @@ function Projects() {
 
   function buildProjects(projects: Project[]) {
     return projects.map((project, i) => (
-      <Card key={`project_${i}`} style={{ minWidth: 230, minHeight: 120, marginLeft: 10, marginTop: 10 }}>
+      <Card key={`project_${i}`} style={{ minWidth: 230, minHeight: 120, marginRight: 10, marginTop: 10 }}>
         <CardActionArea>
           <Typography variant="h6">{project.name}</Typography>
         </CardActionArea>
@@ -88,6 +88,7 @@ function Projects() {
       flexWrap="wrap"
       flexDirection="row"
       margin="30px"
+      marginLeft="0px"
       //
     >
       {buildProjects(context.project.currentFilterProjects)}
